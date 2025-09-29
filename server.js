@@ -11,36 +11,33 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// 基础健康检查
+// 健康检查端点
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    message: 'LLM Tavern is running!',
-    timestamp: new Date().toISOString()
-  });
+    res.json({ 
+        status: 'OK', 
+        message: '服务器运行正常',
+        timestamp: new Date().toISOString()
+    });
 });
 
-// 简单的聊天接口
+// 聊天API端点
 app.post('/api/chat', (req, res) => {
-  const { message } = req.body;
-  
-  console.log('Received message:', message);
-  
-  res.json({ 
-    response: `我已收到你的消息："${message}"。这是一个测试回复。`,
-    usage: { credits: 1 },
-    timestamp: new Date().toISOString()
-  });
-});
-
-// 静态文件服务
-app.use(express.static(path.join(__dirname, 'public')));
-
-// 主页面
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// 启动服务器
-app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 LLM Tavern 服务已启动在端口 ${port}`);
+    try {
+        const { message } = req.body;
+        
+        if (!message) {
+            return res.status(400).json({ error: '消息不能为空' });
+        }
+        
+        console.log('收到消息:', message);
+        
+        // 模拟AI回复
+        const response = {
+            reply: `你说："${message}"。这是一个测试回复，表示服务器正常工作！`,
+            timestamp: new Date().toISOString(),
+            status: 'success'
+        };
+        
+        res.json(response);
+    } catch (error) {
+        console.error('处理
